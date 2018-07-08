@@ -11,12 +11,9 @@ public:
       this->Hour = hour;
       this->Minute = minute;
       this->Indicator = indicator;
-
     };
 
     ~Alarm();
-    //{
-    //};
 
     void setDays(QVector <bool> days){
         this->Days = days;
@@ -43,7 +40,6 @@ public:
     bool getIndicator(){
         return(this->Indicator);
     }
-
 
 private:
     bool Indicator;

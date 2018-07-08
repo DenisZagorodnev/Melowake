@@ -8,6 +8,7 @@
 #include <QDialog>
 #include <alarm.h>
 #include <QTimer>
+
 namespace Ui {
     class AlarmList;
 }

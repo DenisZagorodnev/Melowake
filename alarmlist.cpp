@@ -30,9 +30,7 @@ AlarmList::AlarmList(QWidget *parent) :
 
     //работа с отдельным будильником!
     alarm = new Alarm(false, {false, false, false, false, false, false, false}, 9, 38);
-     onTimer();
-    //loadAlarm(alarm);
-    //alarm = new Alarm(true, {true, false, true, false, false, true, true}, 10, 42);
+    loadAlarm(alarm);
     loadAlarmView(alarm);
 
     createActions();
@@ -40,15 +38,16 @@ AlarmList::AlarmList(QWidget *parent) :
     connect(trayIcon, &QSystemTrayIcon::activated, this, &AlarmList::iconActivated);
     connect(ui->onoff, &QCheckBox::toggled, this, &AlarmList::alarmToggle);
     connect(ui->saveButton, &QPushButton::clicked, this, &AlarmList::onSave);
-    //loadAlarm(alarm);
-    saveAlarm(alarm);
+
     trayIcon->show();
     setWindowTitle(tr("Melowake"));
     resize(400, 300);
-} 
+    onTimer();
+}
 
 AlarmList::~AlarmList()
 {
+    delete timer;
     delete alarm;
     delete ui;
 }
@@ -125,8 +124,6 @@ void AlarmList::saveAlarm(Alarm* alarm){
     setting.setValue("friday", alarm->getDays()[4]);
     setting.setValue("saturday", alarm->getDays()[5]);
     setting.setValue("sunday", alarm->getDays()[6]);
-
-
 }
 
 void AlarmList::onTimer(){
@@ -144,30 +141,19 @@ void AlarmList::loadAlarm(Alarm* alarm){
     QVector <bool> days;
 
     days.append(setting.value("monday", false).toBool());
-
     days.append(setting.value("tuesday", false).toBool());
-
     days.append(setting.value("wednesday", false).toBool());
-
     days.append(setting.value("thursday", false).toBool());
-
     days.append(setting.value("friday", false).toBool());
-
     days.append(setting.value("saturday", false).toBool());
-
     days.append(setting.value("sunday", false).toBool());
-
     bool indicator=setting.value("indicator",false).toBool();
 
     alarm->setDays(days);
     alarm->setHour(hour);
     alarm->setMinute(minute);
     alarm->setIndicator(indicator);
-
-   // loadAlarmView(alarm);
 }
-
-
 
 
 void AlarmList::closeEvent(QCloseEvent *event)
@@ -208,6 +194,7 @@ void AlarmList::closeEvent(QCloseEvent *event)
      connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
  }
 
+
  void AlarmList::createTrayIcon()
  {
      trayIconMenu = new QMenu(this);
@@ -219,5 +206,4 @@ void AlarmList::closeEvent(QCloseEvent *event)
      trayIcon->setContextMenu(trayIconMenu);
      QIcon icon = QIcon(":/icons/picture1.png");
      trayIcon->setIcon(icon);
-
  }
