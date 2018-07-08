@@ -18,19 +18,22 @@
 #include <alarm.h>
 #include <QSettings>
 #include <QTimer>
+#include <QDebug>
+
+#include "alarmwindow.h"
 
 AlarmList::AlarmList(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::AlarmList),
-    alarm(nullptr),
+    alarm(new Alarm()),
     timer(new QTimer())
 {
     ui->setupUi(this);
     ui->onoff->setChecked(false);
 
     //работа с отдельным будильником!
-    alarm = new Alarm(false, {false, false, false, false, false, false, false}, 9, 38);
-    loadAlarm(alarm);
+    alarm = new Alarm();
+    //loadAlarm(alarm);
     loadAlarmView(alarm);
 
     createActions();
@@ -61,9 +64,9 @@ void AlarmList::alarmToggle(bool state)
 //отображение параметров будильника на экране
 void AlarmList::loadAlarmView(Alarm* alarm)
 {
-    ui->onoff->setChecked(alarm->getIndicator());
+    ui->onoff->setChecked(alarm->enabled());
 
-    QVector <bool>week = alarm->getDays();
+    QVector <bool>week = alarm->days();
     ui->day1->setChecked(week.at(0));
     ui->day2->setChecked(week.at(1));
     ui->day3->setChecked(week.at(2));
@@ -72,7 +75,7 @@ void AlarmList::loadAlarmView(Alarm* alarm)
     ui->day6->setChecked(week.at(5));
     ui->day7->setChecked(week.at(6));
 
-    QTime time = QTime(alarm->getHour(), alarm->getMinute(), 0 ,0);
+    QTime time = QTime(alarm->hour(), alarm->minute(), alarm->second());
     ui->timeEdit->setTime(time);
 }
 
@@ -102,7 +105,7 @@ void AlarmList::saveAlarmView(Alarm* alarm)
     alarm->setDays(days);
     alarm->setHour(hour);
     alarm->setMinute(min);
-    alarm->setIndicator(alarmOn);
+    alarm->setEnabled(alarmOn);
 }
 
 void AlarmList::onSave()
@@ -113,25 +116,30 @@ void AlarmList::onSave()
 
 void AlarmList::saveAlarm(Alarm* alarm){
     QSettings setting("DenisZagorodnev", "Melowake");
-    setting.setValue("hour", alarm->getHour());
-    setting.setValue("minute", alarm->getMinute());
-    setting.setValue("indicator", alarm->getIndicator());
+    setting.setValue("hour", alarm->hour());
+    setting.setValue("minute", alarm->minute());
+    setting.setValue("indicator", alarm->enabled());
 
-    setting.setValue("monday", alarm->getDays()[0]);
-    setting.setValue("tuesday", alarm->getDays()[1]);
-    setting.setValue("wednesday", alarm->getDays()[2]);
-    setting.setValue("thursday", alarm->getDays()[3]);
-    setting.setValue("friday", alarm->getDays()[4]);
-    setting.setValue("saturday", alarm->getDays()[5]);
-    setting.setValue("sunday", alarm->getDays()[6]);
+    setting.setValue("monday", alarm->days()[0]);
+    setting.setValue("tuesday", alarm->days()[1]);
+    setting.setValue("wednesday", alarm->days()[2]);
+    setting.setValue("thursday", alarm->days()[3]);
+    setting.setValue("friday", alarm->days()[4]);
+    setting.setValue("saturday", alarm->days()[5]);
+    setting.setValue("sunday", alarm->days()[6]);
 }
 
-void AlarmList::onTimer(){
-    timer->singleShot(1000, this, &AlarmList::onTimer);
-    QTime cur = QTime::currentTime();
-    if((alarm->getHour() == cur.hour())&&(alarm->getMinute() == cur.minute())&&(cur.second()==1)){
-        QMessageBox::information(0, "information", "It is an alert");
+void AlarmList::onTimer()
+{
+    if (alarm->isReady()) {
+        AlarmWindow wind;
+        if (wind.exec() == QDialog::Rejected) {
+            alarm->snooze();
+        } else{
+            alarm->dismiss();
+        }
     }
+    timer->singleShot(1000, this, &AlarmList::onTimer);
 }
 
 void AlarmList::loadAlarm(Alarm* alarm){
@@ -147,12 +155,12 @@ void AlarmList::loadAlarm(Alarm* alarm){
     days.append(setting.value("friday", false).toBool());
     days.append(setting.value("saturday", false).toBool());
     days.append(setting.value("sunday", false).toBool());
-    bool indicator=setting.value("indicator",false).toBool();
+    bool enabled = setting.value("enabled",false).toBool();
 
     alarm->setDays(days);
     alarm->setHour(hour);
     alarm->setMinute(minute);
-    alarm->setIndicator(indicator);
+    alarm->setEnabled(enabled);
 }
 
 
@@ -174,9 +182,7 @@ void AlarmList::closeEvent(QCloseEvent *event)
  {
      switch (reason) {
      case QSystemTrayIcon::Trigger:
-
      case QSystemTrayIcon::MiddleClick:
-
          break;
      default:
          ;
@@ -186,7 +192,6 @@ void AlarmList::closeEvent(QCloseEvent *event)
 
  void AlarmList::createActions()
  {
-
      restoreAction = new QAction(tr("&Restore"), this);
      connect(restoreAction, &QAction::triggered, this, &QWidget::showNormal);
 

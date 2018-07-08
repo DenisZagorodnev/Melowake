@@ -26,14 +26,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         alarmlist.cpp \
-    alarm.cpp
+    alarm.cpp \
+    alarmwindow.cpp
 
 HEADERS += \
         alarmlist.h \
-    alarm.h
+    alarm.h \
+    alarmwindow.h
 
 FORMS += \
-        alarmlist.ui
+        alarmlist.ui \
+    alarmwindow.ui
 
 RESOURCES += \
     resourses.qrc

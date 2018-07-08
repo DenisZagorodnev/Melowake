@@ -6,51 +6,58 @@ class Alarm
 {
 
 public:
-    Alarm(bool indicator, QVector <bool> days, int hour, int minute){
-      this->Days = days;
-      this->Hour = hour;
-      this->Minute = minute;
-      this->Indicator = indicator;
-    };
-
+    Alarm();
+    Alarm(bool enabled, QVector<bool> days, int hour, int minute, int second);
     ~Alarm();
 
     void setDays(QVector <bool> days){
-        this->Days = days;
+        _days = days;
     }
     void setHour(int hour){
-        this->Hour = hour;
+        _hour = hour;
     }
     void setMinute(int minute){
-        this->Minute = minute;
+        _minute = minute;
     }
-    void setIndicator(bool indicator){
-        this->Indicator = indicator;
+    void setSecond(int second){
+        _second = second;
     }
 
-    QVector<bool> getDays(){
-        return(this->Days);
+    void setEnabled(bool enebaled){
+        _enabled = enebaled;
     }
-    int getHour(){
-        return(this->Hour);
+
+    void snooze();
+    void dismiss();
+    bool isReady();
+
+    QVector<bool> days() const {
+        return _days;
     }
-    int getMinute(){
-        return(this->Minute);
+
+    int hour() const {
+        return _hour;
     }
-    bool getIndicator(){
-        return(this->Indicator);
+
+    int minute() {
+        return _minute;
+    }
+
+    bool enabled() {
+        return _enabled;
+    }
+
+    int second(){
+        return _second;
     }
 
 private:
-    bool Indicator;
-    QVector <bool> Days;
-    int Hour;
-    int Minute;
+    bool _enabled;
+    QVector <bool> _days;
+    int _hour;
+    int _minute;
+    int _second;
+    int _delta = 0;
 };
-
-
-
-
-
 
 #endif // ALARM_H

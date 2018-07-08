@@ -1,8 +1,9 @@
-#include "alarmlist.h"
 #include <QApplication>
 #include <QSystemTrayIcon>
 #include <QMessageBox>
-#include <alarm.h>
+
+#include "alarm.h"
+#include "alarmlist.h"
 
 int main(int argc, char *argv[])
 {
