@@ -131,12 +131,14 @@ void AlarmList::saveAlarm(Alarm* alarm){
 
 void AlarmList::onTimer()
 {
-    if (alarm->isReady()) {
+
+    if (alarm->isReady(alarm->_ind)) {
         AlarmWindow wind;
         if (wind.exec() == QDialog::Rejected) {
             alarm->snooze();
         } else{
-            alarm->dismiss();
+            alarm->_ind = alarm->dismiss();
+
         }
     }
     timer->singleShot(1000, this, &AlarmList::onTimer);

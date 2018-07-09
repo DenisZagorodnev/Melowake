@@ -1,15 +1,17 @@
 #ifndef ALARM_H
 #define ALARM_H
 #include <QVector>
+#include <QTime>
 
 class Alarm
 {
 
 public:
+
     Alarm();
     Alarm(bool enabled, QVector<bool> days, int hour, int minute, int second);
     ~Alarm();
-
+    bool _ind = true;
     void setDays(QVector <bool> days){
         _days = days;
     }
@@ -27,9 +29,14 @@ public:
         _enabled = enebaled;
     }
 
+    void setAlarmtime(QTime cur){
+        _alarmTime = cur;
+    }
+
     void snooze();
-    void dismiss();
-    bool isReady();
+    bool dismiss();
+    bool isReady(bool ind);
+    bool isDay();
 
     QVector<bool> days() const {
         return _days;
@@ -51,6 +58,10 @@ public:
         return _second;
     }
 
+    int delta(){
+        return _delta;
+    }
+
 private:
     bool _enabled;
     QVector <bool> _days;
@@ -58,6 +69,8 @@ private:
     int _minute;
     int _second;
     int _delta = 0;
+
+    QTime _alarmTime = QTime::currentTime();
 };
 
 #endif // ALARM_H
