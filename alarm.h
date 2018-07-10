@@ -11,7 +11,9 @@ public:
     Alarm();
     Alarm(bool enabled, QVector<bool> days, int hour, int minute, int second);
     ~Alarm();
-    bool _ind = true;
+
+    bool _alarmed = false;
+
     void setDays(QVector <bool> days){
         _days = days;
     }
@@ -34,8 +36,8 @@ public:
     }
 
     void snooze();
-    bool dismiss();
-    bool isReady(bool ind);
+    void dismiss();
+    bool isReady();
     bool isDay();
 
     QVector<bool> days() const {

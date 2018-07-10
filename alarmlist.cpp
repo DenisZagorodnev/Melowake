@@ -16,7 +16,6 @@ AlarmList::AlarmList(QWidget *parent) :
     ui->setupUi(this);
     ui->onoff->setChecked(false);
 
-    //работа с отдельным будильником!
     alarm = new Alarm(false, {false,false,false,false,false,false,false }, 0,0,1);
     loadAlarm(alarm);
     loadAlarmView(alarm);
@@ -117,14 +116,12 @@ void AlarmList::saveAlarm(Alarm* alarm){
 
 void AlarmList::onTimer()
 {
-
-    if (alarm->isReady(alarm->_ind)) {
+    if (alarm->isReady()) {
         AlarmWindow wind;
         if (wind.exec() == QDialog::Rejected) {
             alarm->snooze();
         } else{
-            alarm->_ind = alarm->dismiss();
-
+            alarm->dismiss();
         }
     }
     timer->singleShot(1000, this, &AlarmList::onTimer);

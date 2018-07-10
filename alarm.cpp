@@ -10,7 +10,7 @@ Alarm::Alarm()
     setHour(curTime.hour());
     setMinute(curTime.minute());
     setSecond(curTime.second());
-    _ind = true;
+    _alarmed = false;
 }
 
 Alarm::Alarm(bool enabled, QVector<bool> days, int hour, int minute, int second){
@@ -19,7 +19,7 @@ Alarm::Alarm(bool enabled, QVector<bool> days, int hour, int minute, int second)
   _minute = minute;
   _second = second;
   _enabled = enabled;
-  _ind = true;
+  _alarmed = false;
 };
 
 Alarm::~Alarm()
@@ -29,28 +29,39 @@ Alarm::~Alarm()
 bool Alarm::isDay(){
     QDate date = QDate::currentDate();
     QVector<bool> days1 = days();
-    if(days1.at(date.dayOfWeek()-1) == true) return true;
-            else return false;
-
-
+    if (days1.at(date.dayOfWeek() - 1) == true)
+        return true;
+    else
+        return false;
 }
 
-bool Alarm::isReady(bool ind) {
-    if(ind){
+bool Alarm::isReady() {
+    if (!enabled())
+        return false;
+    if (!isDay())
+        return false;
+
+    if(!_alarmed){
         QTime alarmTime = QTime(hour(), minute(), second());
         alarmTime = alarmTime.addSecs(_delta);
         QTime curTime = QTime::currentTime();
-        return ((alarmTime.msecsTo(curTime) > 0)&&(isDay()));
+        int msecs = alarmTime.msecsTo(curTime);
+        if ((0 < msecs)&&(msecs < 5000)) {
+            _alarmed = true;
+            return true;
+        }
+        return false;
     }
-    else return false;
+   return false;
 }
 
 void Alarm::snooze() {
     _delta += 10;
+    _alarmed = false;
 }
 
-bool Alarm::dismiss() {
+void Alarm::dismiss() {
     _delta = 0;
-    return false;
+    _alarmed = false;
 
 }
