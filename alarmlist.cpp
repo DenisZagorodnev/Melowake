@@ -1,21 +1,6 @@
 #include "alarmlist.h"
 #include "ui_alarmlist.h"
-#include <QAction>
-#include <QCheckBox>
-#include <QComboBox>
-#include <QCoreApplication>
 #include <QCloseEvent>
-#include <QGroupBox>
-#include <QLabel>
-#include <QLineEdit>
-#include <QMenu>
-#include <QPushButton>
-#include <QSpinBox>
-#include <QTextEdit>
-#include <QVBoxLayout>
-#include <QMessageBox>
-#include <QDialog>
-#include <alarm.h>
 #include <QSettings>
 #include <QTimer>
 #include <QDebug>
@@ -32,8 +17,8 @@ AlarmList::AlarmList(QWidget *parent) :
     ui->onoff->setChecked(false);
 
     //работа с отдельным будильником!
-    alarm = new Alarm();
-    //loadAlarm(alarm);
+    alarm = new Alarm(false, {false,false,false,false,false,false,false }, 0,0,1);
+    loadAlarm(alarm);
     loadAlarmView(alarm);
 
     createActions();
@@ -65,7 +50,7 @@ void AlarmList::alarmToggle(bool state)
 void AlarmList::loadAlarmView(Alarm* alarm)
 {
     ui->onoff->setChecked(alarm->enabled());
-
+    alarmToggle(alarm->enabled());
     QVector <bool>week = alarm->days();
     ui->day1->setChecked(week.at(0));
     ui->day2->setChecked(week.at(1));
@@ -110,6 +95,7 @@ void AlarmList::saveAlarmView(Alarm* alarm)
 
 void AlarmList::onSave()
 {
+    saveAlarmView(alarm);
     saveAlarm(alarm);
     hide();
 }
@@ -118,7 +104,7 @@ void AlarmList::saveAlarm(Alarm* alarm){
     QSettings setting("DenisZagorodnev", "Melowake");
     setting.setValue("hour", alarm->hour());
     setting.setValue("minute", alarm->minute());
-    setting.setValue("indicator", alarm->enabled());
+    setting.setValue("enabled", alarm->enabled());
 
     setting.setValue("monday", alarm->days()[0]);
     setting.setValue("tuesday", alarm->days()[1]);
