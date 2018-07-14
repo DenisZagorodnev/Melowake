@@ -8,4 +8,5 @@ AlarmWindow::AlarmWindow(QWidget *parent)
     ui->setupUi(this);
 
 
+
 }

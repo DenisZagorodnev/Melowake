@@ -46,7 +46,7 @@ bool Alarm::isReady() {
         alarmTime = alarmTime.addSecs(_delta);
         QTime curTime = QTime::currentTime();
         int msecs = alarmTime.msecsTo(curTime);
-        if ((0 < msecs)&&(msecs < 5000)) {
+        if ((-2000 < msecs)&&(msecs < 1500)) {
             _alarmed = true;
             return true;
         }

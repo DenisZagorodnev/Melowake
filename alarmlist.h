@@ -8,6 +8,8 @@
 #include <QDialog>
 #include <alarm.h>
 #include <QTimer>
+#include <QtWidgets>
+#include <QWebEngineView>
 
 namespace Ui {
     class AlarmList;
@@ -46,6 +48,22 @@ private slots:
     void alarmToggle(bool state);
     void onSave();
     void onTimer();
+};
+
+
+class MainWindow : public QMainWindow
+{
+    Q_OBJECT
+
+public:
+    MainWindow();
+
+private:
+    QString jQuery;  //библиотека для взаимодействия JavaScript и HTML
+    QWebEngineView *view; //used to view and edit web documents
+    QLineEdit *locationEdit;
+    QAction *rotateAction;
+    int progress;
 };
 
 #endif // ALARMLIST_H

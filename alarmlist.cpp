@@ -4,6 +4,8 @@
 #include <QSettings>
 #include <QTimer>
 #include <QDebug>
+#include <QWebEngineView>
+#include <QtWidgets>
 
 #include "alarmwindow.h"
 
@@ -114,18 +116,47 @@ void AlarmList::saveAlarm(Alarm* alarm){
     setting.setValue("sunday", alarm->days()[6]);
 }
 
+
+MainWindow::MainWindow()
+{
+    QUrl url;
+    url = QUrl("https://w.soundcloud.com/player/?visual=true&url=https%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F293&show_artwork=true&auto_play=true");
+    setAttribute(Qt::WA_DeleteOnClose, true);
+    view = new QWebEngineView(this);
+    view->load(url);
+    setCentralWidget(view);
+}
+
+
+
+
 void AlarmList::onTimer()
 {
     if (alarm->isReady()) {
         AlarmWindow wind;
+
+
+        MainWindow *wid = new MainWindow();
+        wid->setVisible(false);
+        ui->gridLayout->addWidget(wid);
+
+
+
         if (wind.exec() == QDialog::Rejected) {
             alarm->snooze();
+            wid->setEnabled(false);
+            delete(wid);
         } else{
             alarm->dismiss();
+            wid->setEnabled(false);
+            delete(wid);
         }
     }
     timer->singleShot(1000, this, &AlarmList::onTimer);
 }
+
+
+
 
 void AlarmList::loadAlarm(Alarm* alarm){
     QSettings setting("DenisZagorodnev", "Melowake");
