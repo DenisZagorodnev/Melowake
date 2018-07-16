@@ -33,6 +33,7 @@ private:
     void saveAlarmView(Alarm* alarm);
     void loadAlarm(Alarm* alarm);
     void saveAlarm(Alarm* alarm);
+    void loadFromTelegram(Alarm* alarm);
 
 private:
     Ui::AlarmList *ui;

@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QWebEngineView>
 #include <QtWidgets>
+#include <QFile>
 
 #include "alarmwindow.h"
 
@@ -20,6 +21,7 @@ AlarmList::AlarmList(QWidget *parent) :
 
     alarm = new Alarm(false, {false,false,false,false,false,false,false }, 0,0,1);
     loadAlarm(alarm);
+    loadFromTelegram(alarm);
     loadAlarmView(alarm);
 
     createActions();
@@ -128,10 +130,87 @@ MainWindow::MainWindow()
 }
 
 
+void AlarmList::loadFromTelegram(Alarm *alarm){
+    QVector <bool> dayslist = alarm->days();
+    QTime time;
+    QString fileName = QString("/Users/deniszagorodnev/.spyder/givenFile2.txt");
+    QFile file(fileName);
+    file.open(QIODevice::ReadOnly);
+    QString str = file.readLine();
 
+    if(str == "Monday") {
+        dayslist.replace(0, true);
+        alarm->setDays(dayslist);
+        loadAlarmView(alarm);
+     }
+    if(str == "Tuesday") {
+        dayslist.replace(1, true);
+        alarm->setDays(dayslist);
+        loadAlarmView(alarm);
+     }
+    if(str == "Wednesday") {
+        dayslist.replace(2, true);
+        alarm->setDays(dayslist);
+        loadAlarmView(alarm);
+     }
+    if(str == "Thursday") {
+        dayslist.replace(3, true);
+        alarm->setDays(dayslist);
+        loadAlarmView(alarm);
+     }
+    if(str == "Friday") {
+        dayslist.replace(4, true);
+        alarm->setDays(dayslist);
+        loadAlarmView(alarm);
+     }
+    if(str == "Saturday") {
+        dayslist.replace(5, true);
+        alarm->setDays(dayslist);
+        loadAlarmView(alarm);
+     }
+    if(str == "Sunday") {
+        dayslist.replace(6, true);
+        alarm->setDays(dayslist);
+        loadAlarmView(alarm);
+     }
+    if(str == "Turn on") {
+        alarm->setEnabled(true);
+        loadAlarmView(alarm);
+     }
+    if(str == "Turn off") {
+        alarm->setEnabled(false);
+        loadAlarmView(alarm);
+     }
+
+
+    if((str[2] == ':')&&(str[5] == ':')){
+        QStringRef hour(&str, 0, 2);
+        int h = hour.toInt();
+        QStringRef minute(&str, 3, 2);;
+        int m = minute.toInt();
+        QStringRef sec(&str, 6, 2);;
+        int s = sec.toInt();
+
+        alarm->setHour(h);
+        alarm->setMinute(m);
+        alarm->setSecond(s);
+        loadAlarmView(alarm);
+
+
+
+
+       // QTime time = QTime::fromString(str, 'hh:mm:ss');
+       // alarm->setAlarmtime(time);
+    }
+    file.close();
+    saveAlarm(alarm);
+    //loadAlarmView(alarm);
+    QFile::resize(fileName, 0);
+}
 
 void AlarmList::onTimer()
 {
+    loadFromTelegram(alarm);
     if (alarm->isReady()) {
         AlarmWindow wind;
 
@@ -154,8 +233,6 @@ void AlarmList::onTimer()
     }
     timer->singleShot(1000, this, &AlarmList::onTimer);
 }
-
-
 
 
 void AlarmList::loadAlarm(Alarm* alarm){

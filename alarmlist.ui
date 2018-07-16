@@ -437,6 +437,19 @@
      <property name="title">
       <string>Music type</string>
      </property>
+     <widget class="QCheckBox" name="checkBox">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>111</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Simple track</string>
+      </property>
+     </widget>
     </widget>
    </item>
    <item>
